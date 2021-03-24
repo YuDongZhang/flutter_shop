@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/config/httpHeaders.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -44,7 +46,9 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               return Center(
-                child: Text('加载中'),
+                child: Text(
+                  '加载中',
+                ),
               );
             }
           },
@@ -61,18 +65,27 @@ class SwiperDiy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 333.0, //高度
-      child: Swiper(
-        itemBuilder: (BuildContext context, int index) {
-          //取swiperDataList 里面的 index 对象 , 里面的 image
-          return Image.network("${swiperDataList[index]['image']}", fit: BoxFit.fill);
-        },
-        itemCount: swiperDataList.length,
-        //对于的点
-        pagination: new SwiperPagination(),
-        autoplay: true, //自动播放
-      ),
-    );
+    // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    print('设备宽度:${ScreenUtil().screenWidth}');
+    print('设备高度:${ScreenUtil().screenHeight}');
+    print('设备像素密度:${ScreenUtil().pixelRatio}');
+    return ScreenUtilInit(
+        //上面的是老插件不能用了 , 最新的是这样写的 ,init相当于初始化设计尺寸
+        designSize: Size(750, 1334),
+        allowFontScaling: false,
+        builder: () => Container(
+              height: ScreenUtil().setHeight(333.0), //高度
+              width: ScreenUtil().setWidth(750),
+              child: Swiper(
+                itemBuilder: (BuildContext context, int index) {
+                  //取swiperDataList 里面的 index 对象 , 里面的 image
+                  return Image.network("${swiperDataList[index]['image']}", fit: BoxFit.fill);
+                },
+                itemCount: swiperDataList.length,
+                //对于的点
+                pagination: new SwiperPagination(),
+                autoplay: true, //自动播放
+              ),
+            ));
   }
 }
