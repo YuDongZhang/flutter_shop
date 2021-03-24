@@ -39,9 +39,11 @@ class _HomePageState extends State<HomePage> {
             if (snapshot.hasData) {
               var data = json.decode(snapshot.data.toString()); //这个就是数据, map 和list的组合
               List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
+              List<Map> navigatorList = (data['data']['category'] as List).cast(); //类别列表
               return Column(
                 children: <Widget>[
                   SwiperDiy(swiperDataList: swiperDataList), //页面顶部轮播组件
+                  TopNavigator(navigatorList: navigatorList), //导航组件
                 ],
               );
             } else {
@@ -87,5 +89,47 @@ class SwiperDiy extends StatelessWidget {
                 autoplay: true, //自动播放
               ),
             ));
+  }
+}
+
+//gridview 导航的区域
+class TopNavigator extends StatelessWidget {
+  final List navigatorList;
+
+  TopNavigator({Key key, this.navigatorList}) : super(key: key);
+
+  //内部方法返回 widget , 单个导航栏目的item
+  Widget _gridViewItemUI(BuildContext context, item) {
+    return InkWell(
+      onTap: () {
+        print('点击了导航');
+      },
+      child: Column(
+        children: <Widget>[
+          Image.network(item['image'], width: ScreenUtil().setWidth(95)),
+          Text(item['mallCategoryName'])
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //当条目大于10的时候 , 需要改变 , 太长了 ,这个不是必须的代码
+    if (navigatorList.length > 10) {
+      navigatorList.removeRange(10, navigatorList.length);
+    }
+    return Container(
+      height: ScreenUtil().setHeight(320),
+      padding: EdgeInsets.all(3.0),
+      child: GridView.count(
+        crossAxisCount: 5,
+        padding: EdgeInsets.all(4.0),
+        //遍历
+        children: navigatorList.map((item) {
+          return _gridViewItemUI(context, item);
+        }).toList(),
+      ),
+    );
   }
 }
