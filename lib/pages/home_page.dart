@@ -11,6 +11,8 @@ import 'package:flutter_shop/service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../service/service_method.dart';
+
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
@@ -29,13 +31,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
 
   @override
   Widget build(BuildContext context) {
+    var formData = {'lon': '115.02932', 'lat': '35.76189'};
     return Scaffold(
         appBar: AppBar(
           title: Text('百姓生活+'),
         ),
         //FutureBuilder 请求到数据自动渲染
         body: FutureBuilder(
-          future: getHomePageContent(),
+          // future: getHomePageContent(),
+          future: request('homePageContext', formData),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var data = json.decode(snapshot.data.toString()); //这个就是数据, map 和list的组合
@@ -66,6 +70,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     FloorContent(floorGoodsList: floor2),
                     FloorTitle(picture_address: floor3Title),
                     FloorContent(floorGoodsList: floor3),
+                    HotGoods(),
                   ],
                 ),
               );
@@ -327,6 +332,29 @@ class FloorContent extends StatelessWidget {
         },
         child: Image.network(goods['image']),
       ),
+    );
+  }
+}
+
+class HotGoods extends StatefulWidget {
+  _HotGoodsState createState() => _HotGoodsState();
+}
+
+class _HotGoodsState extends State<HotGoods> {
+  void initState() {
+    super.initState();
+    // getHomePageBeloConten().then((val) {
+    //   print(val);
+    // });
+    request('homePageBelowConten', 1).then((val) {
+      print(val);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text('1111'),
     );
   }
 }
