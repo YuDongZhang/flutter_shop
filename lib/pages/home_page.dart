@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,16 +15,15 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   String homePageContent = '正在获取数据';
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
-    getHomePageContent().then((val) {
-      setState(() {
-        homePageContent = val.toString();
-      });
-    });
+    print('是否重建');
     super.initState();
   }
 
@@ -67,6 +67,8 @@ class _HomePageState extends State<HomePage> {
           },
         ));
   }
+
+
 }
 
 // 首页轮播组件编写
@@ -238,7 +240,7 @@ class Recommend extends StatelessWidget {
         width: ScreenUtil().setWidth(250),
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-            color: Colors.white, border: Border(left: BorderSide(width: 0.5, color: Colors.black12))),
+            color: Colors.white, border: Border(left: BorderSide(width: 1, color: Colors.black12))),
         child: Column(
           children: <Widget>[
             Image.network(recommendList[index]['image']),

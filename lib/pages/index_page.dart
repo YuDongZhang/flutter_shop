@@ -18,7 +18,7 @@ class _IndexPageState extends State<IndexPage> {
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.profile_circled), label: '会员中心'),
   ];
 
-  final List tabBodies = [
+  final List<Widget> tabBodies = [
     HomePage(),
     CategoryPage(),
     CartPage(),
@@ -45,13 +45,18 @@ class _IndexPageState extends State<IndexPage> {
         onTap: (index) {
           //这个是回调, 传入的是索引
           setState(() {
-            currentIndex = index;//index赋值给currentindex , 刷新
+            currentIndex = index; //index赋值给currentindex , 刷新
             currentPage = tabBodies[currentIndex];
           });
         },
       ),
       //这个逻辑就是上面的改变 , 下面的使用
-      body: currentPage,
+      // body: currentPage,
+      body: IndexedStack(
+        //从字面可以看出是个堆栈
+        index: currentIndex,
+        children: tabBodies,
+      ),
     );
   }
 }
