@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/config/httpHeaders.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -41,11 +42,14 @@ class _HomePageState extends State<HomePage> {
               List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
               List<Map> navigatorList = (data['data']['category'] as List).cast(); //类别列表
               String advertesPicture = data['data']['advertesPicture']['PICTURE_ADDRESS']; //广告图片
+              String leaderImage = data['data']['shopInfo']['leaderImage']; //店长图片
+              String leaderPhone = data['data']['shopInfo']['leaderPhone']; //店长电话
               return Column(
                 children: <Widget>[
                   SwiperDiy(swiperDataList: swiperDataList), //页面顶部轮播组件
                   TopNavigator(navigatorList: navigatorList), //导航组件
                   AdBanner(advertesPicture: advertesPicture), //广告组件
+                  LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone) //广告组件
                 ],
               );
             } else {
@@ -147,5 +151,33 @@ class AdBanner extends StatelessWidget {
     return Container(
       child: Image.network(advertesPicture),
     );
+  }
+}
+
+//店长电话模块
+class LeaderPhone extends StatelessWidget {
+  final String leaderImage; //店长图片
+  final String leaderPhone; //店长电话
+
+  LeaderPhone({Key key, this.leaderImage, this.leaderPhone}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: InkWell(
+        // onTap: () {},
+        onTap: _launchURL,
+        child: Image.network(leaderImage),
+      ),
+    );
+  }
+
+  void _launchURL() async {
+    String url = 'tel:' + leaderPhone;
+    if (await canLaunch(url)) {//判断路径的合法
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
