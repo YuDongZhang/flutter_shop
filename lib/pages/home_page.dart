@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/config/httpHeaders.dart';
 import 'package:flutter_shop/service/service_method.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -27,8 +30,49 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text('百姓生活+'),
         ),
-        body: SingleChildScrollView(
-          child: Text(homePageContent),
+        //FutureBuilder 请求到数据自动渲染
+        body: FutureBuilder(
+          future: getHomePageContent(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var data = json.decode(snapshot.data.toString()); //这个就是数据, map 和list的组合
+              List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
+              return Column(
+                children: <Widget>[
+                  SwiperDiy(swiperDataList: swiperDataList), //页面顶部轮播组件
+                ],
+              );
+            } else {
+              return Center(
+                child: Text('加载中'),
+              );
+            }
+          },
         ));
+  }
+}
+
+// 首页轮播组件编写
+class SwiperDiy extends StatelessWidget {
+  final List swiperDataList;
+
+  //super 也可以不写 , 构造函数
+  SwiperDiy({Key key, this.swiperDataList}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 333.0, //高度
+      child: Swiper(
+        itemBuilder: (BuildContext context, int index) {
+          //取swiperDataList 里面的 index 对象 , 里面的 image
+          return Image.network("${swiperDataList[index]['image']}", fit: BoxFit.fill);
+        },
+        itemCount: swiperDataList.length,
+        //对于的点
+        pagination: new SwiperPagination(),
+        autoplay: true, //自动播放
+      ),
+    );
   }
 }
