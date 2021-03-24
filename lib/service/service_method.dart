@@ -44,13 +44,14 @@ Future getHomePageBeloConten() async {
 }
 
 //上面的接口相似 , 综合起来  getHomePageBeloConten  getHomePageContent
-Future request(url, formData) async {
+Future request(url, {formData}) async {
   try {
     print('开始获取数据...............');
     Response response;
     Dio dio = new Dio();
     dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded") as String;
-    if (formData == null) {//判断是否传递参数
+    if (formData == null) {
+      //判断是否传递参数
       response = await dio.post(servicePath[url]);
     } else {
       response = await dio.post(servicePath[url], data: formData);
