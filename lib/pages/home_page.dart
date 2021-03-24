@@ -4,6 +4,7 @@ import 'dart:html';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/config/httpHeaders.dart';
@@ -60,8 +61,18 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
               List<Map> floor2 = (data['data']['floor2'] as List).cast(); //楼层1商品和图片
               List<Map> floor3 = (data['data']['floor3'] as List).cast(); //楼层1商品和图片
 
-              return SingleChildScrollView(
-                child: Column(
+              return EasyRefresh(
+                //很多方法以及过时了
+                footer: ClassicalFooter(
+                    // key:_footerKey,
+                    bgColor: Colors.white,
+                    textColor: Colors.pink,
+                    // moreInfoColor: Colors.pink,
+                    // showMore: true,
+                    noMoreText: '',
+                    // moreInfo: '加载中',
+                    loadReadyText: '上拉加载....'),
+                child: ListView(
                   children: <Widget>[
                     SwiperDiy(swiperDataList: swiperDataList), //页面顶部轮播组件
                     TopNavigator(navigatorList: navigatorList), //导航组件
@@ -77,6 +88,18 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     _hotGoods(),
                   ],
                 ),
+                onLoad: () async {
+                  print('开始加载更多');
+                  var formPage = {'page': page};
+                  await request('homePageBelowConten', formData: formPage).then((val) {
+                    var data = json.decode(val.toString());
+                    List<Map> newGoodsList = (data['data'] as List).cast();
+                    setState(() {
+                      hotGoodsList.addAll(newGoodsList);
+                      page++;
+                    });
+                  });
+                },
               );
             } else {
               return Center(
@@ -170,7 +193,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
       ],
     ));
   }
-
 }
 
 // 首页轮播组件编写
