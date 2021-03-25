@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/model/category.dart';
+import 'package:flutter_shop/provide/child_category.dart';
 import 'package:flutter_shop/service/service_method.dart';
+import 'package:provide/provide.dart';
 
 class CategoryPage extends StatefulWidget {
   _CategoryPageState createState() => _CategoryPageState();
@@ -49,6 +51,7 @@ class LeftCategoryNav extends StatefulWidget {
 
 class _LeftCategoryNavState extends State<LeftCategoryNav> {
   List list = [];
+  var listIndex = 0;
 
   @override
   void initState() {
@@ -72,13 +75,23 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
   }
 
   Widget _leftInkWel(int index) {
+    bool isClick = false;
+    isClick = (index == listIndex) ? true : false;
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          listIndex = index;
+        });
+        //拿到左侧大类, 对于的右侧横幅的小类
+        var childList = list[index].bxMallSubDto;
+        //等于说是拿到了这childList, 通过这个方法传过去
+        Provide.value<ChildCategory>(context).getChildCategory(childList);
+      },
       child: Container(
         height: ScreenUtil().setHeight(100),
         padding: EdgeInsets.only(left: 10, top: 20),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: isClick ? Colors.black26 : Colors.white,
             border:
                 Border(bottom: BorderSide(width: 1, color: Colors.black12))),
         child: Text(
@@ -109,12 +122,13 @@ class RightCategoryNav extends StatefulWidget {
 }
 
 class _RightCategoryNavState extends State<RightCategoryNav> {
-  List list = ['名酒', '宝丰', '北京二锅头'];
+  // List list = ['名酒', '宝丰', '北京二锅头'];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Container(
+        child: Provide<ChildCategory>(builder: (context, child, childCategory) {
+      return Container(
           height: ScreenUtil().setHeight(80),
           width: ScreenUtil().setWidth(570),
           decoration: BoxDecoration(
@@ -123,21 +137,21 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
                   Border(bottom: BorderSide(width: 1, color: Colors.black12))),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: list.length,
+            itemCount: childCategory.childCategoryList.length,
             itemBuilder: (context, index) {
-              return _rightInkWell(list[index]);
+              return _rightInkWell(childCategory.childCategoryList[index]);
             },
-          )),
-    );
+          ));
+    }));
   }
 
-  Widget _rightInkWell(String item) {
+  Widget _rightInkWell(BxMallSubDto item) {
     return InkWell(
       onTap: () {},
       child: Container(
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
         child: Text(
-          item,
+          item.mallSubName,
           style: TextStyle(fontSize: ScreenUtil().setSp(28)),
         ),
       ),
