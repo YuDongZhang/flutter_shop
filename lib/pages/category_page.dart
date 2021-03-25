@@ -1,14 +1,28 @@
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/service/service_method.dart';
 
-class CategoryPage extends StatelessWidget {
+class CategoryPage extends StatefulWidget {
+  _CategoryPageState createState() => _CategoryPageState();
+}
+
+class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('分类页'),
+    _getCategory();
+    return Container(
+      child: Center(
+        child: Text('分类页面'),
       ),
     );
+  }
+
+  void _getCategory() async {
+    await request('getCategory').then((val) {
+      var data = json.decode(val.toString());
+      print(data);
+    });
   }
 }
