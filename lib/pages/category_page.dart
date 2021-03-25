@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/model/category.dart';
 import 'package:flutter_shop/service/service_method.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -22,7 +23,10 @@ class _CategoryPageState extends State<CategoryPage> {
   void _getCategory() async {
     await request('getCategory').then((val) {
       var data = json.decode(val.toString());
-      print(data);
+
+      CategoryBigListModel list = CategoryBigListModel.formJson(data['data']);
+
+      list.data.forEach((item) => print(item.mallCategoryName));
     });
   }
 }
