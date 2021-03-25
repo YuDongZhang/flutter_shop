@@ -6,8 +6,10 @@ import 'package:flutter_shop/provide/counter.dart';
 import 'package:provide/provide.dart';
 
 import 'model/category.dart';
+import 'model/category_goods_list.dart';
 
 void main() {
+  var categoryGoodsListProvide = CategoryGoodsListProvide();
   var childCategory = ChildCategory();
   var counter = Counter();
   var providers = Providers();
@@ -15,7 +17,9 @@ void main() {
   providers
     //有多个可以再 .. , 注册依赖
     ..provide(Provider<Counter>.value(counter))
-    ..provide(Provider<ChildCategory>.value(childCategory));
+    ..provide(Provider<ChildCategory>.value(childCategory))
+    ..provide(
+        Provider<CategoryGoodsListProvide>.value(categoryGoodsListProvide));
   runApp(ProviderNode(child: MyApp(), providers: providers));
 }
 

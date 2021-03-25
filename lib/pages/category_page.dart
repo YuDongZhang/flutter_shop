@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/model/category.dart';
 import 'package:flutter_shop/model/categoryGoodsList.dart';
+import 'package:flutter_shop/model/category_goods_list.dart';
 import 'package:flutter_shop/provide/child_category.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:provide/provide.dart';
@@ -58,6 +59,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
   @override
   void initState() {
     _getCategory();
+    _getGoodList(); //一开始是没有数据的,右下列表, 先请求一下
     super.initState();
   }
 
@@ -88,6 +90,8 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
         var childList = list[index].bxMallSubDto;
         //等于说是拿到了这childList, 通过这个方法传过去
         Provide.value<ChildCategory>(context).getChildCategory(childList);
+        var categoryId = list[index].mallCategoryId;
+        _getGoodList(categoryId: categoryId);
       },
       child: Container(
         height: ScreenUtil().setHeight(100),
@@ -117,6 +121,22 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
       //解决第一次加载白酒没有数据的bug
       Provide.value<ChildCategory>(context)
           .getChildCategory(list[0].bxMallSubDto);
+    });
+  }
+
+  //得到商品列表数据
+  void _getGoodList({String categoryId}) async {
+    var data = {
+      'categoryId': categoryId == null ? '4' : categoryId,
+      'categorySubId': '',
+      'page': 1
+    };
+
+    await request('getMallGoods', formData: data).then((val) {
+      var data = json.decode(val.toString());
+      CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
+      Provide.value<CategoryGoodsListProvide>(context)
+          .getGoodsList(goodsList.data);
     });
   }
 }
@@ -173,53 +193,45 @@ class CategoryGoodsList extends StatefulWidget {
 }
 
 class _CategoryGoodsListState extends State<CategoryGoodsList> {
-  List list = [];
-
   @override
   void initState() {
-    _getGoodList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: ScreenUtil().setWidth(570),
-        height: ScreenUtil().setHeight(1000),
-        child: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            return _ListWidget(index);
-          },
-        ));
-  }
-
-  void _getGoodList() async {
-    var data = {'categoryId': '4', 'categorySubId': "", 'page': 1};
-    await request('getMallGoods', formData: data).then((val) {
-      var data = json.decode(val.toString());
-      CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
-      setState(() {
-        list = goodsList.data;
-      });
-    });
+    return Provide<CategoryGoodsListProvide>(
+      //data为传过来的数据
+      builder: (context, child, data) {
+        return Container(
+          width: ScreenUtil().setWidth(570),
+          height: ScreenUtil().setHeight(1000),
+          child: ListView.builder(
+            itemCount: data.goodsList.length,
+            itemBuilder: (context, index) {
+              return _ListWidget(data.goodsList, index);
+            },
+          ),
+        );
+      },
+    );
   }
 
   //酒图片
-  Widget _goodsImage(index) {
+  Widget _goodsImage(List newList, index) {
     return Container(
       width: ScreenUtil().setWidth(200),
-      child: Image.network(list[index].image),
+      child: Image.network(newList[index].image),
     );
   }
 
   //酒名称
-  Widget _goodsName(index) {
+  Widget _goodsName(List newList, index) {
     return Container(
       padding: EdgeInsets.all(5.0),
       width: ScreenUtil().setWidth(370),
       child: Text(
-        list[index].goodsName,
+        newList[index].goodsName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: ScreenUtil().setSp(28)),
@@ -228,18 +240,18 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
   }
 
   //酒的价格
-  Widget _goodsPrice(index) {
+  Widget _goodsPrice(List newList, index) {
     return Container(
         margin: EdgeInsets.only(top: 20.0),
         width: ScreenUtil().setWidth(370),
         child: Row(children: <Widget>[
           Text(
-            '价格:￥${list[index].presentPrice}',
+            '价格:￥${newList[index].presentPrice}',
             style:
                 TextStyle(color: Colors.pink, fontSize: ScreenUtil().setSp(30)),
           ),
           Text(
-            '￥${list[index].oriPrice}',
+            '￥${newList[index].oriPrice}',
             style: TextStyle(
                 color: Colors.black26, decoration: TextDecoration.lineThrough),
           )
@@ -247,7 +259,7 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
   }
 
   //三个方法组合一起
-  Widget _ListWidget(int index) {
+  Widget _ListWidget(List newList, int index) {
     return InkWell(
         onTap: () {},
         child: Container(
@@ -258,9 +270,12 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
                   bottom: BorderSide(width: 1.0, color: Colors.black12))),
           child: Row(
             children: <Widget>[
-              _goodsImage(index),
+              _goodsImage(newList, index),
               Column(
-                children: <Widget>[_goodsName(index), _goodsPrice(index)],
+                children: <Widget>[
+                  _goodsName(newList, index),
+                  _goodsPrice(newList, index)
+                ],
               )
             ],
           ),
