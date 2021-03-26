@@ -1,3 +1,4 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/pages/index_page.dart';
@@ -14,7 +15,7 @@ void main() {
   var counter = Counter();
   var providers = Providers();
 
-  final router = Router();
+  final router = FluroRouter();
   //在顶层进行的依赖,全局可用
   providers
     //有多个可以再 .. , 注册依赖
