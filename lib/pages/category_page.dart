@@ -183,7 +183,8 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
 
     return InkWell(
       onTap: () {
-        Provide.value<ChildCategory>(context).changeChildIndex(index);
+        Provide.value<ChildCategory>(context)
+            .changeChildIndex(index, item.mallSubId);
         _getGoodList(item.mallSubId);
       },
       child: Container(
@@ -211,14 +212,21 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
       var data = json.decode(val.toString());
       CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
       // Provide.value<CategoryGoodsList>(context).getGoodsList(goodsList.data);
-      Provide.value<CategoryGoodsListProvide>(context)
-          .getGoodsList(goodsList.data);
+      // Provide.value<CategoryGoodsListProvide>(context)
+      //       //     .getGoodsList(goodsList.data);
+
+      //当没有数据的时候传一个空的list过去 , 避免报错
+      if (goodsList.data == null) {
+        Provide.value<CategoryGoodsListProvide>(context).getGoodsList([]);
+      } else {
+        Provide.value<CategoryGoodsListProvide>(context)
+            .getGoodsList(goodsList.data);
+      }
     });
   }
 }
 
 //商品列表，可以上拉加载
-
 class CategoryGoodsList extends StatefulWidget {
   @override
   _CategoryGoodsListState createState() => _CategoryGoodsListState();
@@ -235,17 +243,21 @@ class _CategoryGoodsListState extends State<CategoryGoodsList> {
     return Provide<CategoryGoodsListProvide>(
       //data为传过来的数据
       builder: (context, child, data) {
-        return Expanded(
-            //没有这个会造成屏幕的溢出 , 之前一直没有解决这个问题
-            child: Container(
-          width: ScreenUtil().setWidth(570),
-          child: ListView.builder(
-            itemCount: data.goodsList.length,
-            itemBuilder: (context, index) {
-              return _ListWidget(data.goodsList, index);
-            },
-          ),
-        ));
+        if (data.goodsList != null) {
+          return Expanded(
+              //没有这个会造成屏幕的溢出 , 之前一直没有解决这个问题
+              child: Container(
+            width: ScreenUtil().setWidth(570),
+            child: ListView.builder(
+              itemCount: data.goodsList.length,
+              itemBuilder: (context, index) {
+                return _ListWidget(data.goodsList, index);
+              },
+            ),
+          ));
+        } else {
+          return Text('暂时没有数据');
+        }
       },
     );
   }
