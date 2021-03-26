@@ -13,6 +13,8 @@ void main() {
   var childCategory = ChildCategory();
   var counter = Counter();
   var providers = Providers();
+
+  final router = Router();
   //在顶层进行的依赖,全局可用
   providers
     //有多个可以再 .. , 注册依赖
