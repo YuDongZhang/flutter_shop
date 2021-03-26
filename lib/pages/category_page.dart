@@ -88,9 +88,11 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
         });
         //拿到左侧大类, 对于的右侧横幅的小类
         var childList = list[index].bxMallSubDto;
-        //等于说是拿到了这childList, 通过这个方法传过去
-        Provide.value<ChildCategory>(context).getChildCategory(childList);
         var categoryId = list[index].mallCategoryId;
+        //等于说是拿到了这childList, 通过这个方法传过去
+        Provide.value<ChildCategory>(context)
+            .getChildCategory(childList, categoryId);
+
         _getGoodList(categoryId: categoryId);
       },
       child: Container(
@@ -120,19 +122,20 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
       });
       //解决第一次加载白酒没有数据的bug
       Provide.value<ChildCategory>(context)
-          .getChildCategory(list[0].bxMallSubDto);
+          .getChildCategory(list[0].bxMallSubDto, list[0].mallCategoryId);
     });
   }
 
   //得到商品列表数据
-  void _getGoodList({String categoryId}) async {
+  void _getGoodList({String categoryId}) {
+    //async去掉也可以 , 下面用了then
     var data = {
       'categoryId': categoryId == null ? '4' : categoryId,
       'categorySubId': '',
       'page': 1
     };
 
-    await request('getMallGoods', formData: data).then((val) {
+    request('getMallGoods', formData: data).then((val) {
       var data = json.decode(val.toString());
       CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
       Provide.value<CategoryGoodsListProvide>(context)
@@ -165,7 +168,8 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
             scrollDirection: Axis.horizontal,
             itemCount: childCategory.childCategoryList.length,
             itemBuilder: (context, index) {
-              return _rightInkWell(index,childCategory.childCategoryList[index]);
+              return _rightInkWell(
+                  index, childCategory.childCategoryList[index]);
             },
           ));
     }));
@@ -180,6 +184,7 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
     return InkWell(
       onTap: () {
         Provide.value<ChildCategory>(context).changeChildIndex(index);
+        _getGoodList(item.mallSubId);
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
@@ -191,6 +196,24 @@ class _RightCategoryNavState extends State<RightCategoryNav> {
         ),
       ),
     );
+  }
+
+  //得到商品列表数据
+  void _getGoodList(String categorySubId) {
+    //需要的参数大类的id直接过来
+    var data = {
+      'categoryId': Provide.value<ChildCategory>(context).categoryId,
+      'categorySubId': categorySubId,
+      'page': 1
+    };
+
+    request('getMallGoods', formData: data).then((val) {
+      var data = json.decode(val.toString());
+      CategoryGoodsListModel goodsList = CategoryGoodsListModel.fromJson(data);
+      // Provide.value<CategoryGoodsList>(context).getGoodsList(goodsList.data);
+      Provide.value<CategoryGoodsListProvide>(context)
+          .getGoodsList(goodsList.data);
+    });
   }
 }
 

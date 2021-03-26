@@ -5,9 +5,11 @@ import 'package:flutter_shop/model/category.dart';
 class ChildCategory with ChangeNotifier {
   List<BxMallSubDto> childCategoryList = [];
   int childIndex = 0;
+  String categoryId = '4'; //说明点击右上切换右下需要左边的大类的id
 
   ////点击大类时更换
-  getChildCategory(List<BxMallSubDto> list) {
+  getChildCategory(List<BxMallSubDto> list, String id) {
+    categoryId = id;
     childIndex = 0; //默认恢复 0 , 对应的索引
     //解决页面没有横向列表中的全部的问题
     BxMallSubDto all = BxMallSubDto();
@@ -21,7 +23,8 @@ class ChildCategory with ChangeNotifier {
   }
 
   //改变子类索引
-  changeChildIndex(index) {//也是应该方法
+  changeChildIndex(index) {
+    //也是应该方法
     childIndex = index;
     notifyListeners();
   }
