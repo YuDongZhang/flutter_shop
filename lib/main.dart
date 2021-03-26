@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/pages/index_page.dart';
 import 'package:flutter_shop/provide/child_category.dart';
 import 'package:flutter_shop/provide/counter.dart';
+import 'package:flutter_shop/routers/application.dart';
+import 'package:flutter_shop/routers/routes.dart';
 import 'package:provide/provide.dart';
 
 import 'model/category.dart';
@@ -29,6 +31,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final router = FluroRouter();
+    Routes.configureRoutes(router);
+    Application.router = router;
+
     return ScreenUtilInit(
         //全局类进行初始化
         designSize: Size(750, 1334),
@@ -37,6 +43,7 @@ class MyApp extends StatelessWidget {
               child: MaterialApp(
                 title: '百姓生活+',
                 debugShowCheckedModeBanner: false,
+                onGenerateRoute: Application.router.generator,
                 theme: ThemeData(primaryColor: Colors.pink),
                 home: IndexPage(),
               ),

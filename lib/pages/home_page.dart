@@ -7,6 +7,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_shop/config/httpHeaders.dart';
+import 'package:flutter_shop/routers/application.dart';
 import 'package:flutter_shop/service/service_method.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -141,6 +142,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
         return InkWell(
             onTap: () {
               print('点击了火爆商品');
+              Application.router.navigateTo(context,"/detail?id=${val['goodsId']}");
             },
             child: Container(
               width: ScreenUtil().setWidth(372),
