@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import 'categoryGoodsList.dart';
+import '../model/categoryGoodsList.dart';
 
 class CategoryGoodsListProvide with ChangeNotifier{
 
@@ -10,6 +10,13 @@ class CategoryGoodsListProvide with ChangeNotifier{
   getGoodsList(List<CategoryListData> list){
 
     goodsList=list;
+    notifyListeners();
+  }
+
+  //下拉加载更多的时候
+  getMoreList(List<CategoryListData> list){
+
+    goodsList.addAll(list);
     notifyListeners();
   }
 }

@@ -6,7 +6,7 @@ import 'package:flutter_shop/provide/counter.dart';
 import 'package:provide/provide.dart';
 
 import 'model/category.dart';
-import 'model/category_goods_list.dart';
+import 'provide/category_goods_list.dart';
 
 void main() {
   var categoryGoodsListProvide = CategoryGoodsListProvide();
