@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/pages/details_page/detals_web.dart';
 import 'package:flutter_shop/provide/details_info.dart';
 import 'package:provide/provide.dart';
 
@@ -36,6 +37,7 @@ class DetailsPage extends StatelessWidget {
                     DetailsTopArea(),
                     DetailsExplain(),
                     DetailsTabBar(),
+                    DetailsWeb(),
                   ],
                 ));
               } else {
