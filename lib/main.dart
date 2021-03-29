@@ -2,6 +2,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/pages/index_page.dart';
+import 'package:flutter_shop/provide/cart.dart';
 import 'package:flutter_shop/provide/child_category.dart';
 import 'package:flutter_shop/provide/counter.dart';
 import 'package:flutter_shop/provide/details_info.dart';
@@ -19,6 +20,8 @@ void main() {
   var counter = Counter();
   var providers = Providers();
 
+  var cartProvide = CartProvide();
+
   final router = FluroRouter();
   //在顶层进行的依赖,全局可用
   providers
@@ -27,7 +30,8 @@ void main() {
     ..provide(Provider<ChildCategory>.value(childCategory))
     ..provide(
         Provider<CategoryGoodsListProvide>.value(categoryGoodsListProvide))
-    ..provide(Provider<DetailsInfoProvide>.value(detailsInfoProvide));
+    ..provide(Provider<DetailsInfoProvide>.value(detailsInfoProvide))
+    ..provide(Provider<CartProvide>.value(cartProvide));
   runApp(ProviderNode(child: MyApp(), providers: providers));
 }
 
