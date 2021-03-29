@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/pages/details_page/details_bottom.dart';
 import 'package:flutter_shop/pages/details_page/detals_web.dart';
 import 'package:flutter_shop/provide/details_info.dart';
 import 'package:provide/provide.dart';
@@ -31,15 +32,19 @@ class DetailsPage extends StatelessWidget {
             future: _getBackInfo(context),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Container(
-                    child: ListView(
-                  children: <Widget>[
-                    DetailsTopArea(),
-                    DetailsExplain(),
-                    DetailsTabBar(),
-                    DetailsWeb(),
+                return Stack(
+                  children: [
+                    ListView(
+                      children: <Widget>[
+                        DetailsTopArea(),
+                        DetailsExplain(),
+                        DetailsTabBar(),
+                        DetailsWeb(),
+                      ],
+                    ),
+                    Positioned(bottom: 0, left: 0, child: DetailsBottom())
                   ],
-                ));
+                );
               } else {
                 return Text('加载中........');
               }
